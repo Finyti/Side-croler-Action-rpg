@@ -25,8 +25,8 @@ public class PlayerController : MonoBehaviour
     private bool canDash = true;
     private bool isDashing = false;
 
-    public float dashSpeed = 8f;
-    public float dashingTime = 0.2f;
+    public float dashSpeed = 12f;
+    public float dashingTime = 0.15f;
 
     public float dashCoolDown = 1f;
 
@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         horizontal = Input.GetAxis("Horizontal");
-
+        
         if(Input.GetButtonDown("Jump") && isGrounded())
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpHeight);
