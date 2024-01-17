@@ -8,7 +8,7 @@ public class SkyContentManager : MonoBehaviour
 {
 
     public GameObject skyManager;
-    public Transform mainCamera;
+    public GameObject mainCamera;
 
     public GameObject cloud1Prefab;
     public GameObject cloud2Prefab;
@@ -19,7 +19,7 @@ public class SkyContentManager : MonoBehaviour
     public GameObject cloud7Prefab;
 
     public Sprite starsSky;
-    public Sprite cloudsMassive;
+    public GameObject cloudsMassive;
 
     private bool cloudsActive = false;
     private bool cloudsMassiveActive = false;
@@ -27,8 +27,9 @@ public class SkyContentManager : MonoBehaviour
 
     private List<GameObject> Clouds = new List<GameObject>();
 
-
     public float cloudSpeed = 0.02f;
+
+    private GameObject massiveCloude;
     void Start()
     {
         cloudsActive = skyManager.GetComponent<SkyManager>().cloudsActive;
@@ -42,7 +43,20 @@ public class SkyContentManager : MonoBehaviour
         }
         if (cloudsMassiveActive)
         {
-            GetComponent<SpriteRenderer>().sprite = cloudsMassive;
+            var prefabWidth = cloudsMassive.GetComponent<SpriteRenderer>().bounds.size.x;
+            massiveCloude = Instantiate(cloudsMassive, new Vector3(transform.position.x, transform.position.y, 1), transform.rotation);
+            GameObject massiveCloude2 = Instantiate(cloudsMassive, new Vector3(transform.position.x - prefabWidth + (prefabWidth*0.1f), transform.position.y, 1), transform.rotation);
+            GameObject massiveCloude3 = Instantiate(cloudsMassive, new Vector3(transform.position.x + prefabWidth - (prefabWidth*0.1f), transform.position.y, 1), transform.rotation);
+            massiveCloude2.transform.parent = massiveCloude.transform;
+            massiveCloude3.transform.parent = massiveCloude.transform;
+
+            massiveCloude.AddComponent<MovingParalax>();
+            var par = massiveCloude.GetComponent<MovingParalax>();
+            par.paralaxPower = 0.2f;
+            par.moveSpeed = 0.1f;
+            par.accuracyCorrection = 0.1f;
+            par.cam = mainCamera;
+            //GetComponent<SpriteRenderer>().sprite = cloudsMassive;
         }
         if (cloudsActive)
         {
@@ -64,7 +78,9 @@ public class SkyContentManager : MonoBehaviour
         }
         if (cloudsMassiveActive)
         {
-            GetComponent<SpriteRenderer>().sprite = cloudsMassive;
+            //print(massiveCloude.transform.position += Vector3.right * 100);
+            //massiveCloude.transform.position += Vector3.right * 100;
+            //GetComponent<SpriteRenderer>().sprite = cloudsMassive;
             transform.position = new Vector3(mainCamera.transform.position.x, mainCamera.transform.position.y + 5, 1);
         }
         if (cloudsActive)
@@ -81,7 +97,6 @@ public class SkyContentManager : MonoBehaviour
         cloud.transform.position += new Vector3(cloudSpeed, 0, 0);
         Vector3 viewportPoint = Camera.main.WorldToViewportPoint(cloud.transform.position);
         Vector3 WorldPoint = Camera.main.ViewportToWorldPoint(new Vector3(-1.5f, 0, 0));
-        print(WorldPoint.x);
         if (viewportPoint.x < -2 || viewportPoint.x > 3)
         {
             cloud.transform.position = new Vector3(Random.Range(WorldPoint.x, WorldPoint.x + 40), Random.Range(8, 17), 1);
