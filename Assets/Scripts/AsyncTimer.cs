@@ -1,33 +1,26 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
+//using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using System.Threading.Tasks;
-using System.Threading;
 
 
-public class AsyncTimer
+public class AsyncTimer : MonoBehaviour
 {
-    public class EventTimer
+
+    public static async Task Delay(float seconds, Action func, bool ignoreTimeScale = false)
     {
-        public event EventHandler ProcessCompleted;
-        public int Ms;
-
-        public EventTimer(int ms)
+        var elapsed = 0f;
+        while (elapsed < seconds)
         {
-            Ms = ms;
-        }
-        public async void StartProcess()
-        {
-            await Task.Delay(Ms);
-            OnProcessCompleted(EventArgs.Empty);
-        }
-
-
-        protected virtual void OnProcessCompleted(EventArgs e)
-        {
-            ProcessCompleted?.Invoke(this, e);
+            elapsed += ignoreTimeScale ? Time.unscaledDeltaTime : Time.deltaTime;
+            print(elapsed);
+            if(elapsed >= seconds)
+            {
+                func();
+            }
+            await Task.Yield();
         }
     }
 }

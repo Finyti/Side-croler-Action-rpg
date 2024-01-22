@@ -27,7 +27,7 @@ public class SkyManager : MonoBehaviour
     void Awake()
     {
         sp = GetComponent<SpriteRenderer>();
-        CurrentSky = Random.Range(2, 3);
+        CurrentSky = Random.Range(3, 5);
 
         if (CurrentSky == 1)
         {

@@ -6,7 +6,8 @@ using System.Threading;
 using Random = UnityEngine.Random;
 using System.Reflection;
 using System;
-using UnityEditor.Tilemaps;
+//using static UnityEditorInternal.VersionControl.ListControl;
+//using UnityEditor.Tilemaps;
 
 public class PlayerController : MonoBehaviour
 {
@@ -30,6 +31,8 @@ public class PlayerController : MonoBehaviour
 
     public float dashCoolDown = 1f;
 
+    private AsyncTimer at;
+
 
 
 
@@ -37,6 +40,7 @@ public class PlayerController : MonoBehaviour
     {
         //Application.targetFrameRate = 10;
         rb = GetComponent<Rigidbody2D>();
+        at = GetComponent<AsyncTimer>();
     }
 
 
@@ -74,15 +78,9 @@ public class PlayerController : MonoBehaviour
             isDashing = true;
 
             rb.velocity = new Vector2(0, rb.velocity.y);
-            AsyncTimer.EventTimer ET = new AsyncTimer.EventTimer((int)(dashingTime * 1000));
-            ET.ProcessCompleted += DashingDuration;
-            ET.StartProcess();
 
-            AsyncTimer.EventTimer ET2 = new AsyncTimer.EventTimer((int)(dashCoolDown * 1000));
-            ET2.ProcessCompleted += DashReset;
-            ET2.StartProcess();
-
-
+            Task testTask1 = AsyncTimer.Delay(dashingTime, DashingDuration, true);
+            Task testTask2 = AsyncTimer.Delay(dashCoolDown, DashReset, true);
         }
 
     }
@@ -99,14 +97,14 @@ public class PlayerController : MonoBehaviour
 
     private bool isGrounded()
     {
-        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+        return Physics2D.OverlapCircle(groundCheck.position, 0.4f, groundLayer);
     }
 
-    private void DashingDuration(object sender, EventArgs e)
+    private void DashingDuration()
     {
         isDashing = false;
     }
-    private void DashReset(object sender, EventArgs e)
+    private void DashReset()
     {
         canDash = true;
     }
