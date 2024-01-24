@@ -15,7 +15,6 @@ public class AsyncTimer : MonoBehaviour
         while (elapsed < seconds)
         {
             elapsed += ignoreTimeScale ? Time.unscaledDeltaTime : Time.deltaTime;
-            print(elapsed);
             if(elapsed >= seconds)
             {
                 func();
